@@ -23,9 +23,15 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)    # Ignore warning for now
 GPIO.setup(BTN_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
+# The name of this device
 device = os.environ['AWS_IOT_THING_NAME']
 
+# The system name of the RFID reader we are polling (so we can separate events between multiple readers)
+btn_name: str = os.environ['DEVICE_NAME']
+
+# If the button currently is clicked or not
 isOn=False
+# The last state of the button that was read
 lastState=False
 
 # This is a dummy handler and will not be invoked
@@ -56,6 +62,7 @@ def post_msg(btn_state):
     msg = {
         "pin": str(BTN_PIN),
         "state": str(btn_state),
+        "btnName": btn_name,
         "device": device
     }
     try:
@@ -67,9 +74,26 @@ def post_msg(btn_state):
     except Exception as e:
         logger.error("Failed to publish message: " + repr(e))
 
+# Post that this Lambda's active state was changed (started/stopped) to the MQTT topic "btn/started" or "btn/stopped"
+def post_lambda_state_change(topic: str):
+    print("Sending RFID reader started event on MQTT")
+    msg = {
+        "btnName": btn_name,
+        "device": device
+    }
+    try:
+        client.publish(
+            topic=topic,
+            queueFullPolicy="AllOrException",
+            payload=json.dumps(msg)
+        )
+    except Exception as e:
+        logger.error("Failed to publish message: " + repr(e))
+
 def start_read_cycle():
     print("Starting Button reader on PIN " + str(BTN_PIN))
     try:
+        post_lambda_state_change("btn/started")
         while True:
             btn_state = GPIO.input(BTN_PIN)
             if btn_state == False:
@@ -81,6 +105,7 @@ def start_read_cycle():
     except Exception as e:
         print("Button reader error: " + str(e))
     finally:
+        post_lambda_state_change("btn/stopped")
         print("Closing Button reader (PIN: " + str(BTN_PIN) + ")")
 
 # Start executing the function above

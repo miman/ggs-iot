@@ -27,7 +27,7 @@ reader = SimpleMFRC522()
 # The name of this device
 device: str = os.environ['AWS_IOT_THING_NAME']
 # The system name of the RFID reader we are polling (so we can separate events between multiple readers)
-rfid_reader_name: str = os.environ['RFID_READER_NAME']
+rfid_reader_name: str = os.environ['DEVICE_NAME']
 
 # The last time a tag was read
 lastReadTime: datetime = datetime(2020, 1, 1, 0, 0)
