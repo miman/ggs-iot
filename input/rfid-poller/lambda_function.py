@@ -1,5 +1,6 @@
 # This lambda function will poll the RFID reader continously
 # If the rfid-tag is read, it will post msg to topic "rfid/read"
+# When this rfid reader is started/stopped it will post a msg to topic "rfid/started" or "rfid/stopped"
 
 import logging
 import platform
@@ -25,6 +26,8 @@ reader = SimpleMFRC522()
 
 # The name of this device
 device: str = os.environ['AWS_IOT_THING_NAME']
+# The system name of the RFID reader we are polling (so we can separate events between multiple readers)
+rfid_reader_name: str = os.environ['RFID_READER_NAME']
 
 # The last time a tag was read
 lastReadTime: datetime = datetime(2020, 1, 1, 0, 0)
@@ -43,11 +46,28 @@ def post_read_rfid_tag(id_no: str, text: str):
     msg = {
         "id": id_no,
         "text": text.strip(),
-        "device": device
+        "device": device,
+        "readerName": rfid_reader_name
     }
     try:
         client.publish(
             topic="rfid/read",
+            queueFullPolicy="AllOrException",
+            payload=json.dumps(msg)
+        )
+    except Exception as e:
+        logger.error("Failed to publish message: " + repr(e))
+
+# Post that this RFID reader Lambda active state was changed (started/stopped) to the MQTT topic "rfid/started" or "rfid/stopped"
+def post_rfid_poller_state_change(topic: str):
+    print("Sending RFID reader started event on MQTT")
+    msg = {
+        "readerName": rfid_reader_name,
+        "device": device
+    }
+    try:
+        client.publish(
+            topic=topic,
             queueFullPolicy="AllOrException",
             payload=json.dumps(msg)
         )
@@ -60,6 +80,7 @@ def start_read_cycle():
     global lastReadTime
     global lastReadTag
     try:
+        post_rfid_poller_state_change("rfid/started")
         while True:
             id_no, text = reader.read()
             now: datetime = datetime.now()
@@ -75,6 +96,7 @@ def start_read_cycle():
     except Exception as e:
         print("RFID reader error: " + str(e))
     finally:
+        post_rfid_poller_state_change("rfid/stopped")
         print("Closing RFID reader")
 
 # Start executing the long-lived polling-function
