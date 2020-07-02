@@ -15,6 +15,7 @@ from threading import Timer
 import RPi.GPIO as GPIO
 from time import sleep
 import json
+import uuid
 import greengrasssdk
 import os
 
@@ -29,6 +30,10 @@ client = greengrasssdk.client("iot-data")
 device: str = os.environ['AWS_IOT_THING_NAME']
 # The system name of the powerdevice we are controlling (so we can separate events between multiple controllers)
 actuator_name: str = os.environ['DEVICE_NAME']
+if actuator_name is None or len(actuator_name) == 0:
+    # No sensor name was supplied -> create a random one
+    actuator_name = uuid.uuid1()
+    print("Random sensor name was generated: " + actuator_name)
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)    # Ignore warning for now
