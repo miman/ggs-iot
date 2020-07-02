@@ -14,6 +14,7 @@ import os
 import RPi.GPIO as GPIO
 from time import sleep
 import json
+import uuid
 import greengrasssdk
 
 # Setup logging to stdout
@@ -26,7 +27,7 @@ client = greengrasssdk.client("iot-data")
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)    # Ignore warning for now
 
-# The system name of the RFID reader we are polling (so we can separate events between multiple readers)
+# The PIN number for this sensor
 io_pin_no_str: str = os.environ['IO_PIN_NO']
 
 SENSOR_PIN: int = 20
@@ -40,8 +41,12 @@ GPIO.setup(SENSOR_PIN, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 # The name of this device
 device = os.environ['AWS_IOT_THING_NAME']
 
-# The system name of the RFID reader we are polling (so we can separate events between multiple readers)
+# The system name of the sensor we are polling (so we can separate events between multiple readers)
 sensor_name: str = os.environ['DEVICE_NAME']
+if sensor_name is None or len(sensor_name) == 0:
+    # No sensor name was supplied -> create a random one
+    sensor_name = uuid.uuid1()
+    print("Random sensor name was generated: " + sensor_name)
 
 # If the button currently is clicked or not
 isOn=False
@@ -76,9 +81,9 @@ def post_msg(btn_state):
     print(text_to_send)
     topic_name: str = ""
     if btn_state:
-        topic_name = "pir/on"
+        topic_name = "pir/" + sensor_name + "/on"
     else:
-        topic_name = "pir/off"
+        topic_name = "pir/" + sensor_name + "/off"
     msg = {
         "pin": str(SENSOR_PIN),
         "state": str(btn_state),
@@ -97,8 +102,8 @@ def post_msg(btn_state):
 
 # Post that this Lambda's active state was changed (started/stopped) to the MQTT topic "pir/started" or "pir/stopped"
 def post_lambda_state_change(state: str):
-    print("Sending sensor poller started event on MQTT")
-    topic_name: str = "pir/" + state
+    topic_name: str = "pir/" + sensor_name + "/" + state
+    print("Sending sensor poller started event on topic: " + topic_name)
     msg = {
         "sensorName": sensor_name,
         "device": device

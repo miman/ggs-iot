@@ -28,7 +28,7 @@ client = greengrasssdk.client("iot-data")
 # The name of this device
 device: str = os.environ['AWS_IOT_THING_NAME']
 # The system name of the powerdevice we are controlling (so we can separate events between multiple controllers)
-controlled_device_name: str = os.environ['DEVICE_NAME']
+actuator_name: str = os.environ['DEVICE_NAME']
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)    # Ignore warning for now
@@ -60,9 +60,9 @@ def btn_msg_received(msg):
 # Post that this RFID reader Lambda active state was changed (started/stopped) to the MQTT topic "rfid/started" or "rfid/stopped"
 def post_state_change(state: str):
     print("Sending Power controller state change event on MQTT topic: " + state)
-    topic_name: str = "pwrRelay/" + state
+    topic_name: str = "pwrRelay/" + actuator_name + "/" + state
     msg = {
-        "deviceName": controlled_device_name,
+        "deviceName": actuator_name,
         "device": device,
         "state": state
     }
@@ -81,9 +81,9 @@ def lambda_handler(event, context):
     # print("power-controller> Msg content: " + json.dumps(event))
     # parse received msg
     topic = context.client_context.custom["subject"]
-    if topic == "rfid/read":
+    if "rfid/" in topic and "/read" in topic:
         rfid_msg_received(event)
-    elif topic == "btn/on":
+    elif "btn/" in topic and "/on" in topic:
         btn_msg_received(event)
     else:
         print("msg received on unknown topic: " + topic)

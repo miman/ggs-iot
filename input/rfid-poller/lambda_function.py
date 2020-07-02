@@ -14,6 +14,7 @@ import RPi.GPIO as GPIO
 from time import sleep
 from mfrc522 import SimpleMFRC522
 import json
+import uuid
 import greengrasssdk
 from datetime import datetime, timedelta
 
@@ -30,7 +31,11 @@ reader = SimpleMFRC522()
 # The name of this device
 device: str = os.environ['AWS_IOT_THING_NAME']
 # The system name of the RFID reader we are polling (so we can separate events between multiple readers)
-rfid_reader_name: str = os.environ['DEVICE_NAME']
+sensor_name: str = os.environ['DEVICE_NAME']
+if sensor_name is None or len(sensor_name) == 0:
+    # No sensor name was supplied -> create a random one
+    sensor_name = uuid.uuid1()
+    print("Random sensor name was generated: " + sensor_name)
 
 # The last time a tag was read
 lastReadTime: datetime = datetime(2020, 1, 1, 0, 0)
@@ -49,13 +54,13 @@ def post_read_rfid_tag(id_no: str, text: str):
     msg = {
         "id": id_no,
         "text": text.strip(),
-        "sensorName": rfid_reader_name,
+        "sensorName": sensor_name,
         "sensorType": "RFID",
         "device": device
     }
     try:
         client.publish(
-            topic="rfid/read",
+            topic="rfid/" + sensor_name + "/read",
             queueFullPolicy="AllOrException",
             payload=json.dumps(msg)
         )
@@ -63,15 +68,16 @@ def post_read_rfid_tag(id_no: str, text: str):
         logger.error("Failed to publish message: " + repr(e))
 
 # Post that this RFID reader Lambda active state was changed (started/stopped) to the MQTT topic "rfid/started" or "rfid/stopped"
-def post_rfid_poller_state_change(topic: str):
-    print("Sending RFID reader started event on MQTT")
+def post_rfid_poller_state_change(state: str):
+    topic_name: str = "rfid/" + sensor_name + "/" + state
+    print("Sending RFID reader started event on topic: " + topic_name)
     msg = {
-        "sensorName": rfid_reader_name,
+        "sensorName": sensor_name,
         "device": device
     }
     try:
         client.publish(
-            topic=topic,
+            topic=topic_name,
             queueFullPolicy="AllOrException",
             payload=json.dumps(msg)
         )
@@ -84,7 +90,7 @@ def start_read_cycle():
     global lastReadTime
     global lastReadTag
     try:
-        post_rfid_poller_state_change("rfid/started")
+        post_rfid_poller_state_change("started")
         while True:
             id_no, text = reader.read()
             now: datetime = datetime.now()
@@ -100,7 +106,7 @@ def start_read_cycle():
     except Exception as e:
         print("RFID reader error: " + str(e))
     finally:
-        post_rfid_poller_state_change("rfid/stopped")
+        post_rfid_poller_state_change("stopped")
         print("Closing RFID reader")
 
 # Start executing the long-lived polling-function
