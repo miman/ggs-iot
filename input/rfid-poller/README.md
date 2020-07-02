@@ -33,5 +33,22 @@ When this poller is started/stopped it will post a msg to topic **rfid/started**
 IO_PIN_NO: The PIN the sensor uses
 DEVICE_NAME: The logical name of the sensor
 
+# PIN Connection
+
+RC522   --  R-PI
+=================
+3.3     --  3.3
+
+RST     --  PIN 22 / GPIO23
+
+GND     --  GND
+
+MISO    --  PIN 21 (MISO) / SPMISO / GPIO09
+
+MOSI    --  PIN 19 (MOSI) / SPMOSI / GPIO10
+
+SCK     --  PIN 23 (SCK) / SPISCLK/ GPIO11                        SCK = Selektor
+
+SDA     --  PIN 24 (SDA) / SPICEO / GPIO08
 
 [Back to Main page](../README.md)
