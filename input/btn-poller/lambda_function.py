@@ -1,5 +1,6 @@
 # This lambda function will poll the RFID reader & Button continously
-# If the button is pressed, it will post msg to topic "btn/state"
+# If the button is pressed, it will post msg to topic "btn/on" or "btn/off"
+# When this poller is started/stopped it will post a msg to topic "btn/started" or "btn/stopped"
 
 import logging
 import platform
@@ -55,10 +56,16 @@ def btn_released():
     isOn=False
     if lastState != isOn:
       print("Button was released")  
+      post_msg(False)
 
 def post_msg(btn_state):
-    text_to_send="Button state read '" + str(btn_state) + "' on Greengrass device: " + device
+    text_to_send: str = "Button state read '" + str(btn_state) + "' on Greengrass device: " + device
     print(text_to_send)
+    topic_name: str = ""
+    if btn_state:
+        topic_name = "btn/on"
+    else:
+        topic_name = "btn/off"
     msg = {
         "pin": str(BTN_PIN),
         "state": str(btn_state),
@@ -67,7 +74,7 @@ def post_msg(btn_state):
     }
     try:
         client.publish(
-            topic="btn/state",
+            topic=topic_name,
             queueFullPolicy="AllOrException",
             payload=json.dumps(msg)
         )
