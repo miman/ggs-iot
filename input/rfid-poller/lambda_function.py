@@ -46,8 +46,8 @@ def post_read_rfid_tag(id_no: str, text: str):
     msg = {
         "id": id_no,
         "text": text.strip(),
-        "device": device,
-        "readerName": rfid_reader_name
+        "readerName": rfid_reader_name,
+        "device": device
     }
     try:
         client.publish(
