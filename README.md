@@ -16,4 +16,6 @@ These are used to zip the project into a zip file that can be uploaded as a Lamb
 # Default setup
 GPIO19  Button 
 GPIO20  PIR
-GPIO12  LED
+GPIO12  Power relay
+GPIO13  LED
+SPI     RFID reader
