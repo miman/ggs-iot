@@ -2,6 +2,9 @@
 # If the button is pressed, it will post msg to topic "btn/on" or "btn/off"
 # When this poller is started/stopped it will post a msg to topic "btn/started" or "btn/stopped"
 
+# Dynamic settings configurable as environment variables:
+# DEVICE_NAME: The logical name of the button
+
 import logging
 import platform
 import sys
@@ -69,7 +72,8 @@ def post_msg(btn_state):
     msg = {
         "pin": str(BTN_PIN),
         "state": str(btn_state),
-        "btnName": btn_name,
+        "sensorName": btn_name,
+        "sensorType": "Button",
         "device": device
     }
     try:
@@ -85,7 +89,7 @@ def post_msg(btn_state):
 def post_lambda_state_change(topic: str):
     print("Sending RFID reader started event on MQTT")
     msg = {
-        "btnName": btn_name,
+        "sensorName": btn_name,
         "device": device
     }
     try:

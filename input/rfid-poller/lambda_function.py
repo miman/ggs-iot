@@ -2,6 +2,9 @@
 # If the rfid-tag is read, it will post msg to topic "rfid/read"
 # When this rfid reader is started/stopped it will post a msg to topic "rfid/started" or "rfid/stopped"
 
+# Dynamic settings configurable as environment variables:
+# DEVICE_NAME: The logical name of the RFID unit
+
 import logging
 import platform
 import sys
@@ -46,7 +49,8 @@ def post_read_rfid_tag(id_no: str, text: str):
     msg = {
         "id": id_no,
         "text": text.strip(),
-        "readerName": rfid_reader_name,
+        "sensorName": rfid_reader_name,
+        "sensorType": "RFID",
         "device": device
     }
     try:
@@ -62,7 +66,7 @@ def post_read_rfid_tag(id_no: str, text: str):
 def post_rfid_poller_state_change(topic: str):
     print("Sending RFID reader started event on MQTT")
     msg = {
-        "readerName": rfid_reader_name,
+        "sensorName": rfid_reader_name,
         "device": device
     }
     try:
