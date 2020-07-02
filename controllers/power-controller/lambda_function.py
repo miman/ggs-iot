@@ -39,9 +39,29 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)    # Ignore warning for now
 
 PWR_RELAY_PIN=12
+# The PIN number for this sensor
+try:
+    io_pin_no_str: str = os.environ['IO_PIN_NO']
+except Exception as e:
+    # IO PIN # was not supplied
+    print("IO PIN # was not supplied")
+    # The sensor pin no was overridden -> set new pin
+    PWR_RELAY_PIN = int(io_pin_no_str)
+    print("Power relay PIN was overriden to: " + str(PWR_RELAY_PIN))
+
 GPIO.setup(PWR_RELAY_PIN, GPIO.OUT, initial=GPIO.HIGH)
 
 LEDPIN=13
+# The PIN number for this sensor
+try:
+    io_pin_no_str: str = os.environ['LED_IO_PIN_NO']
+except Exception as e:
+    # LED IO PIN # was not supplied
+    print("LED IO PIN # was not supplied")
+    # The sensor pin no was overridden -> set new pin
+    LEDPIN = int(io_pin_no_str)
+    print("LED PIN was overriden to: " + str(LEDPIN))
+
 GPIO.setup(LEDPIN, GPIO.OUT, initial=GPIO.LOW)
 
 def rfid_msg_received(msg):

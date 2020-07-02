@@ -27,5 +27,7 @@ state can be on or off
 
 ## Dynamic settings configurable as environment variables:
 DEVICE_NAME: The logical name of the sensor
+IO_PIN_NO: The PIN the Power relay uses
+LED_IO_PIN_NO: The PIN the LED uses
 
 [Back to Main page](../README.md)
