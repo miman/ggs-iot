@@ -1,8 +1,7 @@
 # This lambda function will poll the HC-SR04 distance sensor continously
 # It will store that latest value & send it if requested for it
-# When this poller is started/stopped it will post a msg to topic "distance/started" or "distance/stopped"
-# Requested sensor values will be returned on topic "distance/" + sensor_name + "/value"
-# Requests are listened to on MQTT topic "distance/" + sensor_name + "/request"
+# When this poller is started/stopped it will post a msg to topic "distancepoller/{sensor_name}/started" or "distancepoller/{sensor_name}/stopped"
+# Requested sensor values will be posted on topic "distancepoller/{sensor_name}/value"
 
 # Hardware setup:
 # Trig to GPIO26
@@ -29,10 +28,8 @@ import json
 import uuid
 import greengrasssdk
 
-# Last read distance value
-last_read_distance = -1
-
-ms_between_polls = 0.2
+# # of seconds between each sensor poll
+sec_between_polls = 0.2
 
 #GPIO Mode (BOARD / BCM)
 GPIO.setmode(GPIO.BCM)
@@ -53,27 +50,37 @@ client = greengrasssdk.client("iot-data")
 # It will then initialize the GPIO PIN's for output/input & settle sensor
 def initialize():
     print ("Initializing sensor")
-    global ms_between_polls
+    global sec_between_polls
+    global GPIO_TRIGGER
+    global GPIO_ECHO
 
     # The PIN numbers for this sensor
-    trig_pin_no_str: str = os.environ['TRIG_PIN_NO']
-    echo_pin_no_str: str = os.environ['ECHO_PIN_NO']
-    ms_between_polls_str: str = os.environ['ECHO_PIN_NO']
+    try:
+        trig_pin_no_str: str = os.environ['TRIG_PIN_NO']
+        if not (trig_pin_no_str is None) and len(trig_pin_no_str) > 0:
+            # The Trig sensor pin no was overridden -> set new pin
+            GPIO_TRIGGER = int(trig_pin_no_str)
+            print("Trigger-PIN was overriden to: " + str(GPIO_TRIGGER))
+    except KeyError:
+        print("Trigger-PIN was NOT overriden keeping: " + str(GPIO_TRIGGER))
 
-    if not (trig_pin_no_str is None) and len(trig_pin_no_str) > 0:
-        # The Trig sensor pin no was overridden -> set new pin
-        GPIO_TRIGGER = int(trig_pin_no_str)
-        print("Trigger-PIN was overriden to: " + str(GPIO_TRIGGER))
+    try:
+        echo_pin_no_str: str = os.environ['ECHO_PIN_NO']
+        if not (echo_pin_no_str is None) and len(echo_pin_no_str) > 0:
+            # The Echo sensor pin no was overridden -> set new pin
+            GPIO_ECHO = int(echo_pin_no_str)
+            print("Echo-PIN was overriden to: " + str(GPIO_ECHO))
+    except KeyError:
+        print("Echo-PIN was NOT overriden keeping: " + str(GPIO_ECHO))
 
-    if not (echo_pin_no_str is None) and len(echo_pin_no_str) > 0:
-        # The Echo sensor pin no was overridden -> set new pin
-        GPIO_ECHO = int(echo_pin_no_str)
-        print("Echo-PIN was overriden to: " + str(GPIO_ECHO))
-
-    if not (ms_between_polls_str is None) and len(ms_between_polls_str) > 0:
-        # The ms_between_polls was overridden -> set new value
-        ms_between_polls = int(ms_between_polls_str)
-        print("ms between polls was overriden to: " + str(ms_between_polls))
+    try:
+        sec_between_polls_str: str = os.environ['POLL_INTERVAL']
+        if not (sec_between_polls_str is None) and len(sec_between_polls_str) > 0:
+            # The sec_between_polls was overridden -> set new value
+            sec_between_polls = int(sec_between_polls_str)/1000
+            print("ms between polls was overriden to: " + str(sec_between_polls))
+    except KeyError:
+        print("ms between polls was NOT overriden keeping: " + str(sec_between_polls))
 
     #set GPIO direction (IN / OUT)
     GPIO.setup(GPIO_TRIGGER, GPIO.OUT)
@@ -135,7 +142,7 @@ def post_msg(distance):
     text_to_send: str = "Distance read '" + str(distance) + "' on Greengrass device: " + device
     print(text_to_send)
     topic_name: str = ""
-    topic_name = "distance/" + sensor_name + "/value"
+    topic_name = "distancepoller/" + sensor_name + "/value"
     msg = {
         "pins": "Trig_" + str(GPIO_TRIGGER) + ":Echo_" + str(GPIO_ECHO),
         "distanceMm": distance,
@@ -154,7 +161,7 @@ def post_msg(distance):
 
 # Post that this Lambda's active state was changed (started/stopped) to the MQTT topic "distance/started" or "distance/stopped"
 def post_lambda_state_change(state: str):
-    topic_name: str = "distance/" + sensor_name + "/" + state
+    topic_name: str = "distancepoller/" + sensor_name + "/" + state
     print("Sending Distance poller started event on topic: " + topic_name)
     msg = {
         "sensorName": sensor_name,
@@ -170,8 +177,7 @@ def post_lambda_state_change(state: str):
         logger.error("Failed to publish message: " + repr(e))
 
 def start_read_cycle():
-    global last_read_distance
-    global ms_between_polls
+    global sec_between_polls
     print("Starting Distance poller on PINs (Trig, Echo): (" + str(GPIO_TRIGGER) + ", " + str(GPIO_ECHO) + ")")
     try:
         initialize()
@@ -179,7 +185,8 @@ def start_read_cycle():
         while True:
             last_read_distance = get_distance()
             print ("Measured Distance = %.1f mm" % last_read_distance)
-            time.sleep(ms_between_polls)
+            post_msg(last_read_distance)
+            time.sleep(sec_between_polls)
 
         # Reset by pressing CTRL + C
     except KeyboardInterrupt:
@@ -193,22 +200,6 @@ def start_read_cycle():
 # Start executing the function above
 start_read_cycle()
 
-def handle_request(msg):
-    print("Distance request msg received: Type: " + str(msg["type"]))
-    try:
-        # ToDo: handle different request types (one-time, timer & trigger)
-        post_msg(last_read_distance)
-    except Exception as e:
-        logger.error("Failed to handle distance request: " + repr(e))
-
 # This is the Lambda handler, this will be called whenever a msg is received on any topic that is routed to this Lambda
 def lambda_handler(event, context):
-    print("distance-controller> Msg received")
-    # print("power-controller> Msg content: " + json.dumps(event))
-    # parse received msg
-    topic = context.client_context.custom["subject"]
-
-    if "distance/" in topic and "/request" in topic:
-        handle_request(event)
-    else:
-        print("msg received on unknown topic: " + topic)
+    print("distance-poller> Msg received, but this Lambda cannot handle msgs")
