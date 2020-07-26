@@ -30,8 +30,8 @@ import uuid
 import greengrasssdk
 
 # Last read distance value
-last_read_distance = -1
-pins_cache = "?"
+last_read_distance: int = -1
+pins_cache: str = "?"
 
 # Setup logging to stdout
 logger = logging.getLogger(__name__)
@@ -41,7 +41,7 @@ logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 client = greengrasssdk.client("iot-data")
 
 # The name of this device
-device = os.environ['AWS_IOT_THING_NAME']
+device: str = os.environ['AWS_IOT_THING_NAME']
 
 # The system name of the RFID reader we are polling (so we can separate events between multiple readers)
 try:
@@ -103,7 +103,7 @@ def lambda_handler(event, context):
     print("distance-controller> Msg received")
     # print("power-controller> Msg content: " + json.dumps(event))
     # parse received msg
-    topic = context.client_context.custom["subject"]
+    topic: str = context.client_context.custom["subject"]
 
     if "distance/" in topic and "/request" in topic:
         handle_request(event)
