@@ -28,10 +28,16 @@ When this poller is started/stopped it will post a msg to topic **btn/started** 
 }
 ```
 
-
 ## Dynamic settings configurable as environment variables:
 IO_PIN_NO: The PIN the sensor uses
 DEVICE_NAME: The logical name of the sensor
 
+# HW setup - PIN Connection
+This block contains information on howto wire the hardware on a Raspberry PI with the default PIN's used in the code
+
+| On device  | On Raspberry PI  |
+|---|---|
+| leg 1  | GND  |
+| leg 2  | GPIO19  |
 
 [Back to Main page](../README.md)

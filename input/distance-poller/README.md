@@ -49,4 +49,19 @@ You also should define the subscribers that listens to events from this module o
 - **distancepoller/+/value**
 - OR everything @ **distancepoller/#**
 
+# HW setup - PIN Connection
+This block contains information on howto wire the hardware on a Raspberry PI with the default PIN's used in the code
+
+| On device  | On Raspberry PI  |
+|---|---|
+| GND  | GND  |
+| VCC  | 3.3 V  |
+| TRIG  | GPIO26  |
+| ECHO  | Resistor 560 Ohm -> GPIO07 ->  Resistor 1000 Ohm -> GND |
+
+So ECHO is connected to Resistor 560 Ohm which is connected to GPIO07 which is connected to  Resistor 1000 Ohm which is connected to GND
+
+This is done to lower the voltage from the sensor from 5 V to 3.3 which can be handled by the Raspberry PI (voltage divider).
+
+
 [Back to Main page](../README.md)

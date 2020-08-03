@@ -33,22 +33,19 @@ When this poller is started/stopped it will post a msg to topic **rfid/started**
 IO_PIN_NO: The PIN the sensor uses
 DEVICE_NAME: The logical name of the sensor
 
-# PIN Connection
+# HW setup - PIN Connection
+This block contains information on howto wire the hardware on a Raspberry PI with the default PIN's used in the code
 
-RC522   --  R-PI
-=================
-3.3     --  3.3
+| On device (RC522) | On Raspberry PI  |
+|---|---|
+| GND  | GND  |
+| 3.3  | 3.3  |
+| RST  | PIN 22 / GPIO23  |
+| MISO  | PIN 19 (MOSI) / SPMOSI / GPIO10  |
+| MOSI  | PIN 19 (MOSI) / SPMOSI / GPIO10  |
+| SCK  | PIN 23 (SCK) / SPISCLK/ GPIO11 |
+| SDA  | PIN 24 (SDA) / SPICEO / GPIO08 |
 
-RST     --  PIN 22 / GPIO23
-
-GND     --  GND
-
-MISO    --  PIN 21 (MISO) / SPMISO / GPIO09
-
-MOSI    --  PIN 19 (MOSI) / SPMOSI / GPIO10
-
-SCK     --  PIN 23 (SCK) / SPISCLK/ GPIO11                        SCK = Selektor
-
-SDA     --  PIN 24 (SDA) / SPICEO / GPIO08
+SCK = Selektor
 
 [Back to Main page](../README.md)

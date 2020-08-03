@@ -30,4 +30,14 @@ DEVICE_NAME: The logical name of the sensor
 IO_PIN_NO: The PIN the Power relay uses
 LED_IO_PIN_NO: The PIN the LED uses
 
+# HW setup - PIN Connection
+This block contains information on howto wire the hardware on a Raspberry PI with the default PIN's used in the code
+
+| On device  | On Raspberry PI  |
+|---|---|
+| GND  | GND  |
+| VCC  | 5 V  |
+| IN1  | TBD  |
+| IN2  | TBD |
+
 [Back to Main page](../README.md)
