@@ -54,8 +54,8 @@ def post_read_rfid_tag(id_no: str, text: str):
     msg = {
         "id": id_no,
         "text": text.strip(),
-        "sensorName": sensor_name,
-        "sensorType": "RFID",
+        "name": sensor_name,
+        "type": "RFID_READER",
         "device": device
     }
     try:
@@ -72,7 +72,8 @@ def post_rfid_poller_state_change(state: str):
     topic_name: str = "rfid/" + sensor_name + "/" + state
     print("Sending RFID reader started event on topic: " + topic_name)
     msg = {
-        "sensorName": sensor_name,
+        "name": sensor_name,
+        "type": "RFID_READER",
         "device": device
     }
     try:

@@ -87,8 +87,8 @@ def post_msg(btn_state):
     msg = {
         "pin": str(BTN_PIN),
         "state": str(btn_state),
-        "sensorName": sensor_name,
-        "sensorType": "Button",
+        "name": sensor_name,
+        "type": "BUTTON",
         "device": device
     }
     try:
@@ -105,7 +105,8 @@ def post_lambda_state_change(state: str):
     topic_name: str = "btn/" + sensor_name + "/" + state
     print("Sending Button poller started event on topic: " + topic_name)
     msg = {
-        "sensorName": sensor_name,
+        "name": sensor_name,
+        "type": "BUTTON",
         "device": device
     }
     try:

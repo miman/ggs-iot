@@ -146,8 +146,8 @@ def post_msg(distance):
     msg = {
         "pins": "Trig_" + str(GPIO_TRIGGER) + ":Echo_" + str(GPIO_ECHO),
         "distanceMm": distance,
-        "sensorName": sensor_name,
-        "sensorType": "Distance",
+        "name": sensor_name,
+        "type": "DISTANCE_SENSOR",
         "device": device
     }
     try:
@@ -164,7 +164,8 @@ def post_lambda_state_change(state: str):
     topic_name: str = "distancepoller/" + sensor_name + "/" + state
     print("Sending Distance poller started event on topic: " + topic_name)
     msg = {
-        "sensorName": sensor_name,
+        "name": sensor_name,
+        "type": "DISTANCE_SENSOR",
         "device": device
     }
     try:

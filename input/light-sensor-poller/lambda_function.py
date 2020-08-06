@@ -94,8 +94,8 @@ def post_state_msg(sensor_state):
     msg = {
         "pin": str(SENSOR_PIN),
         "state": str(sensor_state),
-        "sensorName": sensor_name,
-        "sensorType": "LIGHT_SENSOR",
+        "name": sensor_name,
+        "type": "LIGHT_SENSOR",
         "device": device
     }
     try:
@@ -112,7 +112,8 @@ def post_sensor_value(value: str):
     topic_name: str = "light_sensor/" + sensor_name + "/value"
     print("Sending sensor value event on topic: " + topic_name)
     msg = {
-        "sensorName": sensor_name,
+        "name": sensor_name,
+        "type": "LIGHT_SENSOR",
         "device": device,
         "value": value
     }

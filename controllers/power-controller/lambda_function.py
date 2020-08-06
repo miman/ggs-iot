@@ -87,7 +87,8 @@ def post_state_change(state: str):
     print("Sending Power controller state change event on MQTT topic: " + state)
     topic_name: str = "pwrRelay/" + actuator_name + "/" + state
     msg = {
-        "deviceName": actuator_name,
+        "name": actuator_name,
+        "type": "POWER_RELAY",
         "device": device,
         "state": state
     }

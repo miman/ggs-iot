@@ -78,10 +78,10 @@ def post_state_change(state: str):
     print("Sending Servo controller state change event on MQTT topic: " + state)
     topic_name: str = "servo/" + actuator_name + "/" + state
     msg = {
-        "deviceName": actuator_name,
+        "name": actuator_name,
+        "type": "SERVO",
         "device": device,
-        "state": state,
-        "type": "servo"
+        "state": state
     }
     try:
         client.publish(
@@ -94,8 +94,8 @@ def post_state_change(state: str):
 
 # This is the Lambda handler, this will be called whenever a msg is received on any topic that is routed to this Lambda
 def lambda_handler(event, context):
-    print("servo-controller> Msg received")
-    # print("power-controller> Msg content: " + json.dumps(event))
+    # print("servo-controller> Msg received")
+    print("servo-controller> Msg content: " + json.dumps(event))
     # parse received msg
     topic = context.client_context.custom["subject"]
     if "servo/" in topic and "/set" in topic:
