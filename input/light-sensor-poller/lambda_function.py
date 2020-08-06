@@ -128,6 +128,10 @@ def post_sensor_value(value: str):
 # Infinite runner function
 # Polls for new sensor values
 def start_read_cycle():
+    global last_value
+    global SENSOR_PIN
+    global sensitivity
+    global polling_time
     print("Starting sensor poller on PIN " + str(SENSOR_PIN))
     try:
         post_sensor_value("started")
@@ -147,7 +151,7 @@ def start_read_cycle():
                 diff = time.time() - current_time
 
             # We now have a light sensor value            
-            print("Light sensor value: " + diff*sensitivity)
+            print("Light sensor value: " + str(diff*sensitivity))
             if (last_value != diff):
                 post_sensor_value(diff*sensitivity)
                 last_value = diff
