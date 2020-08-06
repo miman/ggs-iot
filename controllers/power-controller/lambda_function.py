@@ -76,8 +76,8 @@ def rfid_msg_received(msg):
 def btn_msg_received(msg):
     print("Button msg received")
     try:
-        GPIO.output(LEDPIN, GPIO.LOW) # Turn on
-        GPIO.output(PWR_RELAY_PIN, GPIO.HIGH) # Turn on
+        GPIO.output(LEDPIN, GPIO.LOW) # Turn off
+        GPIO.output(PWR_RELAY_PIN, GPIO.HIGH) # Turn off
         post_state_change("off")
     except Exception as e:
         logger.error("Failed to handle btn msg: " + repr(e))
