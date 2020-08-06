@@ -29,6 +29,14 @@ logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 # Creating a greengrass core sdk client
 client = greengrasssdk.client("iot-data")
 
+# Function used to get the environment variable with the given name
+def gen_env_variable(name, default):
+    value: str = os.environ[name]
+    if value is None or len(value) == 0:
+        # No env variable with given name exists -> use default
+        value = default
+        print("Env variable with name " + name + " doesn't exist -> using default: " + value)
+
 # The name of this device
 device: str = os.environ['AWS_IOT_THING_NAME']
 # The system name of the powerdevice we are controlling (so we can separate events between multiple controllers)
@@ -51,27 +59,30 @@ GPIO.setup(servo_pin, GPIO.OUT)
 servo = GPIO.PWM(servo_pin, 50)    # 50 = 50Hz pulse
 
 def move_servo_to_angle(angle):
+    global servo
+    global servo_min
+    global SERVO_STOP
     print("Move servo to angle: " + str(angle))
+    print("Rotating...")
     try:
-        print("Rotating...")
-        try:
-            # Start PWM running, but with value off 0 (pulse off)
-            servo.start(0)
-
-            servo.ChangeDutyCycle(servo_min + (angle/18))
-            time.sleep(0.5)
-            servo.ChangeDutyCycle(SERVO_STOP)
-        finally:
-            print("Rotate completed")
-            servo.stop()
+        # Start PWM running, but with value off 0 (pulse off)
+        servo.start(0)
+        print("1")
+        servo.ChangeDutyCycle(servo_min + (angle/18))
+        print("2")
+        Timer(0.5, lambda: servo.ChangeDutyCycle(SERVO_STOP)).start()
+        print("4")
+    finally:
+        print("Rotate completed")
+        servo.stop()
 
 # The handler for a set request, will parse the msg and move the servo to the given angle
 def set_msg_received(msg):
     print("Set MQTT msg received")
     try:
-        move_servo_to_angle(msg.angle)
+        move_servo_to_angle(msg["angle"])
     except Exception as e:
-        logger.error("Failed to handle btn msg: " + repr(e))
+        logger.error("Failed to handle set request")    #  + repr(e)
 
 # Post that this module Lambda active state was changed (started/stopped) to the MQTT topic "servo/.../started" or "servo/.../stopped"
 def post_state_change(state: str):
@@ -103,10 +114,3 @@ def lambda_handler(event, context):
     else:
         print("msg received on unknown topic: " + topic)
 
-# Function used to get the environment variable with the given name
-def gen_env_variable(name, default):
-    value: str = os.environ['DEVICE_NAME']
-    if value is None or len(value) == 0:
-        # No env variable with given name exists -> use default
-        value = default
-        print("Env variable with name " + name + " doesn't exist -> using default: " + value)
