@@ -58,6 +58,9 @@ except Exception as e:
 GPIO.setup(servo_pin, GPIO.OUT)
 servo = GPIO.PWM(servo_pin, 50)    # 50 = 50Hz pulse
 
+# Start PWM running, but with value off 0 (pulse off)
+servo.start(0)
+
 def move_servo_to_angle(angle):
     global servo
     global servo_min
@@ -65,16 +68,12 @@ def move_servo_to_angle(angle):
     print("Move servo to angle: " + str(angle))
     print("Rotating...")
     try:
-        # Start PWM running, but with value off 0 (pulse off)
-        servo.start(0)
-        print("1")
-        servo.ChangeDutyCycle(servo_min + (angle/18))
-        print("2")
-        Timer(0.5, lambda: servo.ChangeDutyCycle(SERVO_STOP)).start()
-        print("4")
+        servo.ChangeDutyCycle(servo_min + (int(angle)/18))
+        sleep(0.7)
+        servo.ChangeDutyCycle(SERVO_STOP)
     finally:
         print("Rotate completed")
-        servo.stop()
+#        servo.stop()
 
 # The handler for a set request, will parse the msg and move the servo to the given angle
 def set_msg_received(msg):
