@@ -1,5 +1,17 @@
 # ggs-iot
-Greengrass IoT Lambdas
+This project contains a number of Greengrass IoT Lambdas accessing physical hardware and communicating over AWS IoT / MQTT, so communicating with a backend is very simple as well as communicating with other Lambdas in the Greegrass device..
+
+There are both input & output devices, example of devices that can be communicated with are:
+* Input
+  * Button
+  * NFC Reader
+  * Depth sensor
+  * PIR/Motion sensor
+  * Light sensor
+* Output/Controllers
+  * Relay controlling 220/110V
+  * Servo motor
+  * LED
 
 # Folder structure
 This section describes the folder structure of this project
