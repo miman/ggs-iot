@@ -1,9 +1,9 @@
 # power-controller
 Contains an input lambda controlling a servo relay
 
-This lambda function will control the relay based on input on the topic **servo/+/read**
+This lambda function will control the relay based on input on the topic **servo/+/set**
 
-If we get a msg on topic **servo/+/read** we will activate the power
+If we get a msg on topic **servo/+/set** we will activate the power
 
 We assume the Servo relay is on PIN GPIO4
 

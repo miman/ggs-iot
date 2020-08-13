@@ -129,3 +129,6 @@ dmypy.json
 .pyre/
 greengrasssdk
 *.zip
+
+dist/
+node_modules/
