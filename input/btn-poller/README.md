@@ -10,7 +10,7 @@ If the sensor is active/inactive, it will post msg to topic **btn/on** or **btn/
 ```
 {
     "pin": 12,
-    "state": "on",
+    "pressed": true,
     "sensorName": "off-btn",
     "sensorType": "Button",
     "device": "iot-1"

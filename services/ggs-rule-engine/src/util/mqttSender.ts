@@ -24,7 +24,11 @@ export class MqttSender {
             payload: JSON.stringify(msg),
             queueFullPolicy: 'AllOrError',
         };
-        this.iotClient.publish(publishParams, this.publishCallback);
+        try {
+            this.iotClient.publish(publishParams, this.publishCallback);
+        } catch (err) {
+            console.log("MqttSender> publishMqttMsg failed: " + JSON.stringify(err))
+        }
     }
 
     private publishCallback(err: any, data: any) {

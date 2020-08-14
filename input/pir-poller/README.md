@@ -6,13 +6,13 @@ When no motion is detected any longer, an off-event is sent
 ## Events
 
 ### Sensor events
-If the sensor is active/inactive, it will post msg to topic **pir/on** or **pir/off**
+When the sensor netected precense or not , it will post msg to topic **pir/value**
 
 ***The message format***
 ```
 {
     "pin": 12,
-    "state": "on",
+    "presence": true,
     "sensorName": "door-sensor",
     "sensorType": "PIR",
     "device": "iot-1"

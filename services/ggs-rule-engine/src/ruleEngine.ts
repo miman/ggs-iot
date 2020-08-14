@@ -1,11 +1,13 @@
-import { Engine, Rule } from 'json-rules-engine'
-import { servoController } from './controllers/servoController'
+import { Engine, Rule } from 'json-rules-engine';
+import { servoController } from './controllers/servoController';
+import { gpioController } from './controllers/gpioController';
 
 /**
  * This is a dynamic rule engine
  */
 export class RuleEngine {
     engine: Engine;
+    deviceName: string;
     /**
      * Define facts the engine will use to evaluate the conditions above.
      * Facts may also be loaded asynchronously at runtime; see the advanced example below
@@ -14,6 +16,7 @@ export class RuleEngine {
 
     constructor() {
         this.engine = new Engine()
+        this.deviceName = process.env.AWS_IOT_THING_NAME || "?";
 
         this.facts = {
             btnPresses: 0,
@@ -109,6 +112,57 @@ export class RuleEngine {
             }
         });
         this.engine.addRule(rule);
+
+        // define a rule for detecting if we should turn the LED on based on :
+        // - If the button is pressed
+        rule = new Rule({
+            conditions: {
+                any: [{
+                    all: [{
+                        fact: 'btnPressed',
+                        operator: 'equal',
+                        value: 'true'
+                    },{
+                        fact: 'lastButtonPressedState',
+                        operator: 'equal',
+                        value: 'false'
+                    }]
+                }]
+            },
+            event: {  // define the event to fire when the conditions evaluate truth
+                type: 'SetGpioPin',
+                params: {
+                    message: 'Activate GPIO PIN',
+                    topic: "gpio/" + this.deviceName + "/27/write",
+                    value: true
+                }
+            }
+        });
+        this.engine.addRule(rule);
+        rule = new Rule({
+            conditions: {
+                any: [{
+                    all: [{
+                        fact: 'btnPressed',
+                        operator: 'equal',
+                        value: 'false'
+                    },{
+                        fact: 'lastButtonPressedState',
+                        operator: 'equal',
+                        value: 'true'
+                    }]
+                }]
+            },
+            event: {  // define the event to fire when the conditions evaluate truth
+                type: 'SetGpioPin',
+                params: {
+                    message: 'Activate GPIO PIN',
+                    topic: "gpio/" + this.deviceName + "/27/write",
+                    value: false
+                }
+            }
+        });
+        this.engine.addRule(rule);
     }
 
     public runEngine() {
@@ -125,6 +179,9 @@ export class RuleEngine {
                     }
                     if (event.type.match("TurnServo") && event.params) {
                         servoController.setAngle(event.params.angle, event.params.topic);
+                    }
+                    if (event.type.match("SetGpioPin") && event.params) {
+                        gpioController.setPinState(event.params.value, event.params.topic)
                     }
                 })
             })

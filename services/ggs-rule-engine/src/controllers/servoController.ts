@@ -15,7 +15,7 @@ export class ServoController {
         let request: ServoControllerRequest = {
             angle: angle
         }
-        mqttSender.publishMqttMsg(event, topic);
+        mqttSender.publishMqttMsg(request, topic);
         console.log("ServoController> msg to send on topic [" + topic + "]: " + JSON.stringify(request));
     }
 }

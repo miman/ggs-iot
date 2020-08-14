@@ -12,7 +12,7 @@ let myName: string = process.env.AWS_IOT_THING_NAME || "unknown";
 
 // This is a handler which does nothing for this example
 exports.handler = function handler(event: any, context: any) {
-    console.log("ggs-rule-engine> event received");
+    // console.log("ggs-rule-engine> event received");
     let topic: string = context.clientContext.Custom.subject;
     if (topic.startsWith("distancepoller/") && topic.includes("/value")) {
         distanceEventHandler.handleEvent(event, topic);
