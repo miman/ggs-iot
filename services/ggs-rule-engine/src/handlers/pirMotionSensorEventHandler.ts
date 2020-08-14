@@ -8,7 +8,7 @@ export class PirMotionSensorEventHandler {
 
     public handleEvent(event: PirMotionSensorEvent, topic: string) {
         console.log("PirMotionSensorEventHandler> msg received on topic [" + topic + "]: " + JSON.stringify(event));
-        ruleEngine.handlePirMotionSensorEvent(event.name);
+        ruleEngine.handlePirMotionSensorEvent(event.name, event.presence);
     }
 }
 

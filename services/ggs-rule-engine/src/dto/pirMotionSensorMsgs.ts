@@ -1,6 +1,6 @@
 export interface PirMotionSensorEvent {
-    /** The state of the PIR motion sensor (true = movement noticied, false = no movement noticed) */
-    state: string,
+    /** The state of the PIR motion sensor (true = movement noticed, false = no movement noticed) */
+    presence: boolean,
     /** At which GPIO PIN the sensor is connected */
     pin?: string,
     /** The name of this sensor */

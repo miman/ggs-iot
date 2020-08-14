@@ -19,9 +19,11 @@ export class MqttSender {
      * @param topic The topic name to send on
      */
     public publishMqttMsg(msg: any, topic: string) {
+        let payload: string = JSON.stringify(msg);
+        console.log("MqttSender> sending msg to topic [" + topic + "]: " + payload);
         let publishParams: PublishParams = {
             topic: topic,
-            payload: JSON.stringify(msg),
+            payload: payload,
             queueFullPolicy: 'AllOrError',
         };
         try {
