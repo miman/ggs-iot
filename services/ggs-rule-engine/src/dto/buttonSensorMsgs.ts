@@ -1,6 +1,6 @@
 export interface ButtonSensorEvent {
     /** The state of the button (true = button pressed, false = button not pressed) */
-    state: string,
+    pressed: boolean,
     /** At which GPIO PIN the sensor is connected */
     pin?: string,
     /** The name of this sensor */

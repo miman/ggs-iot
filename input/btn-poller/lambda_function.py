@@ -76,7 +76,7 @@ def btn_released():
       print("Button was released")  
       post_msg(False)
 
-def post_msg(btn_state):
+def post_msg(btn_state: bool):
     text_to_send: str = "Button state read '" + str(btn_state) + "' on Greengrass device: " + device
     print(text_to_send)
     topic_name: str = ""
@@ -86,7 +86,7 @@ def post_msg(btn_state):
         topic_name = "btn/" + sensor_name + "/off"
     msg = {
         "pin": str(BTN_PIN),
-        "state": str(btn_state),
+        "pressed": btn_state,
         "name": sensor_name,
         "type": "BUTTON",
         "device": device

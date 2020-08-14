@@ -76,17 +76,13 @@ def is_inactive():
       print("Sensor is in-active")  
       post_msg(False)
 
-def post_msg(btn_state):
-    text_to_send: str = "Read sensor state '" + str(btn_state) + "' on Greengrass device: " + device
+def post_msg(state: bool):
+    text_to_send: str = "Read sensor state '" + str(state) + "' on Greengrass device: " + device
     print(text_to_send)
-    topic_name: str = ""
-    if btn_state:
-        topic_name = "pir/" + sensor_name + "/on"
-    else:
-        topic_name = "pir/" + sensor_name + "/off"
+    topic_name: str = "pir/" + sensor_name + "/value"
     msg = {
         "pin": str(SENSOR_PIN),
-        "state": str(btn_state),
+        "presence": state,
         "name": sensor_name,
         "type": "PIR_MOTION_SENSOR",
         "device": device
@@ -123,8 +119,8 @@ def start_read_cycle():
     try:
         post_lambda_state_change("started")
         while True:
-            btn_state = GPIO.input(SENSOR_PIN)
-            if btn_state == False:
+            state = GPIO.input(SENSOR_PIN)
+            if state == False:
                 is_active()
             else:
                 is_inactive()
