@@ -12,8 +12,8 @@ For each new (non-same) value it will send an event on topic **light_sensor/valu
 {
     "pin": 12,
     "state": "on",
-    "sensorName": "light-sensor-1",
-    "sensorType": "LIGHT_SENSOR",
+    "name": "light-sensor-1",
+    "type": "LIGHT_SENSOR",
     "device": "iot-1"
 }
 ```
@@ -24,7 +24,10 @@ When this poller is started/stopped it will post a msg to topic **light_sensor/s
 ***The message format***
 ```
 {
-    "sensorName": "light-sensor-1",
+    "name": "light-sensor-1",
+    "type": "LIGHT_SENSOR",
+    "state": "true",
+    "pin": "5",
     "device": "iot-1"
 }
 ```

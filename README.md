@@ -1,6 +1,8 @@
 # ggs-iot
 This project contains a number of Greengrass IoT Lambdas accessing physical hardware and communicating over AWS IoT / MQTT, so communicating with a backend is very simple as well as communicating with other Lambdas in the Greegrass device..
 
+By using these Lambdas you can focus your implementation on working with MQTT interfaces accessing hardware instead of the GPIO detailed code :-)
+
 There are both input & output devices, example of devices that can be communicated with are:
 * Input
   * Button

@@ -11,8 +11,8 @@ If the sensor is active/inactive, it will post msg to topic **btn/on** or **btn/
 {
     "pin": 12,
     "pressed": true,
-    "sensorName": "off-btn",
-    "sensorType": "Button",
+    "name": "off-btn",
+    "type": "BUTTON",
     "device": "iot-1"
 }
 ```
@@ -23,7 +23,8 @@ When this poller is started/stopped it will post a msg to topic **btn/started** 
 ***The message format***
 ```
 {
-    "sensorName": "off-btn",
+    "name": "off-btn",
+    "type": "BUTTON",
     "device": "iot-1"
 }
 ```

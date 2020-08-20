@@ -11,8 +11,8 @@ Whenever the sensor reads a new TAG, it will post msg to topic **rfid/read**
 {
     "id": "783268192",
     "text": "John Smith",
-    "sensorName": "id-reader",
-    "sensorType": "RFID",
+    "name": "id-reader",
+    "type": "RFID_READER",
     "device": "iot-1"
 }
 ```
@@ -24,6 +24,7 @@ When this poller is started/stopped it will post a msg to topic **rfid/started**
 ```
 {
     "sensorName": "door-sensor",
+    "type": "RFID_READER",
     "device": "iot-1"
 }
 ```

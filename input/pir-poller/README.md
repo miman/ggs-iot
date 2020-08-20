@@ -13,8 +13,8 @@ When the sensor netected precense or not , it will post msg to topic **pir/value
 {
     "pin": 12,
     "presence": true,
-    "sensorName": "door-sensor",
-    "sensorType": "PIR",
+    "name": "door-sensor",
+    "type": "PIR_MOTION_SENSOR",
     "device": "iot-1"
 }
 ```
@@ -25,7 +25,8 @@ When this poller is started/stopped it will post a msg to topic **pir/started** 
 ***The message format***
 ```
 {
-    "sensorName": "door-sensor",
+    "name": "door-sensor",
+    "type": "PIR_MOTION_SENSOR",
     "device": "iot-1"
 }
 ```
