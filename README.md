@@ -25,9 +25,6 @@ The [input](./input/README.md) folder contains input lambdas reading input data 
 ## Zip-bat files
 These are used to zip the project into a zip file that can be uploaded as a Lambda to AWS
 
-# Default setup
-GPIO19  Button 
-GPIO20  PIR
-GPIO12  Power relay
-GPIO13  LED
-SPI     RFID reader
+# Webcasts
+If you are new to working with AWS IoT Greengrass, check the project linked below for example Lambdas and a link to a webcast series on what AWS configurations that are needed. 
+[rpi-greengrass](https://github.com/miman/rpi-greengrass)
