@@ -27,4 +27,5 @@ These are used to zip the project into a zip file that can be uploaded as a Lamb
 
 # Webcasts
 If you are new to working with AWS IoT Greengrass, check the project linked below for example Lambdas and a link to a webcast series on what AWS configurations that are needed. 
+
 [rpi-greengrass](https://github.com/miman/rpi-greengrass)
