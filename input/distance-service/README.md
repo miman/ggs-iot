@@ -1,5 +1,10 @@
-# btn-poller
-Lambda function for Greengrass used to poll a HC-SR04 distance sensor the distance to the object in front of it
+# distance-service
+Lambda function for Greengrass which enables a client to request for distance sensor data or set a trigger for the data.
+This is done in a separate Lambda from the distance-poller Lambda while the actual poller Lambda is a long running Lambda it cannot listen to incoming MQTT msgs.
+So this Lambda can listen to requests from the clients and also events from the actual poller, it caches and then resends the events when requested by the client.
+
+## Limitations
+For now it can only handle one distance poller sensor
 
 ## Requests
 
@@ -7,6 +12,8 @@ Lambda function for Greengrass used to poll a HC-SR04 distance sensor the distan
 Requests are listened to on MQTT topic **distance/{sensor_name}/request**
 
 ***The message format***
+OBS !, Only one-time works for now.
+
 One-time is used if we want the last known distance directly & once
 ```
 {
@@ -34,7 +41,6 @@ once = false -> all values outside this span (false)
 }
 ```
 
-
 ## Events
 
 ### Sensor events
@@ -45,28 +51,14 @@ Requested sensor value will be returned on topic **distance/{sensor_name}/value*
 {
     "pins": "Trig_26:Echo_17",
     "distanceMm": 125.1,
-    "sensorName": "off-btn",
-    "sensorType": "Distance",
-    "device": "iot-1"
-}
-```
-
-### Lambda lifecycle events
-When this poller is started/stopped it will post a msg to topic **distance/started** or **distance/stopped**
-
-***The message format***
-```
-{
-    "sensorName": "distance-1",
+    "name": "off-btn",
+    "type": "DISTANCE_SENSOR",
     "device": "iot-1"
 }
 ```
 
 
 ## Dynamic settings configurable as environment variables:
-DEVICE_NAME: The logical name of the button
-TRIG_PIN_NO: The PIN number of the Trig (Output) connector
-ECHO_PIN_NO: The PIN number of the Echo (Input) connector
-POLL_INTERVAL: The intervall between polls (ms)
+none
 
 [Back to Main page](../README.md)

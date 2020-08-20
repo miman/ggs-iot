@@ -3,7 +3,7 @@ Lambda function for Greengrass used to poll a HC-SR04 distance sensor the distan
 The sensor will be polled once every *POLL_INTERVAL* ms and the value will be posted on the MQTT topic **distancepoller/{sensor_name}/value**
 
 ## Events
-These are the events that i sposted by this long running Lambda service
+These are the events that is posted by this long running Lambda service
 
 ### Sensor events
 Requested sensor value will be returned on topic **distancepoller/{sensor_name}/value**
@@ -13,8 +13,8 @@ Requested sensor value will be returned on topic **distancepoller/{sensor_name}/
 {
     "pins": "Trig_26:Echo_17",
     "distanceMm": 125.1,
-    "sensorName": "off-btn",
-    "sensorType": "Distance",
+    "name": "off-btn",
+    "type": "DISTANCE_SENSOR",
     "device": "iot-1"
 }
 ```
@@ -25,7 +25,8 @@ When this poller is started/stopped it will post a msg to topic **distancepoller
 ***The message format***
 ```
 {
-    "sensorName": "distance-1",
+    "name": "distance-1",
+    "type": "DISTANCE_SENSOR",
     "device": "iot-1"
 }
 ```

@@ -32,6 +32,7 @@ import greengrasssdk
 # Last read distance value
 last_read_distance: int = -1
 pins_cache: str = "?"
+name_cache: str = "?"
 
 # Setup logging to stdout
 logger = logging.getLogger(__name__)
@@ -43,28 +44,17 @@ client = greengrasssdk.client("iot-data")
 # The name of this device
 device: str = os.environ['AWS_IOT_THING_NAME']
 
-# The system name of the RFID reader we are polling (so we can separate events between multiple readers)
-try:
-    sensor_name: str = os.environ['DEVICE_NAME']
-    if sensor_name is None or len(sensor_name) == 0:
-        # No sensor name was supplied -> create a random one
-        sensor_name = uuid.uuid1()
-        print("Random sensor name was generated: " + sensor_name)
-except KeyError:
-    sensor_name = uuid.uuid1()
-    print("Default sensor name is used: " + sensor_name)
-
 # Posts a message to the value MQTT topic with the given distance
 def post_msg(distance):
     global pins_cache
     global device
-    global sensor_name
-    topic_name: str = "distance/" + sensor_name + "/value"
+    global name_cache
+    topic_name: str = "distance/" + name_cache + "/value"
     msg = {
         "pins": pins_cache,
         "distanceMm": distance,
-        "sensorName": sensor_name,
-        "sensorType": "Distance",
+        "name": name_cache,
+        "type": "DISTANCE_SENSOR",
         "device": device
     }
     print("Sending msg: " + json.dumps(msg))
@@ -95,6 +85,7 @@ def update_distance_cache(msg):
         # ToDo: handle different request types (one-time, timer & trigger)
         last_read_distance = msg["distanceMm"]
         pins_cache = msg["pins"]
+        name_cache = msg["name"]
     except Exception as e:
         logger.error("Failed to handle distance request: " + repr(e))
 
