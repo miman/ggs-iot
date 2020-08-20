@@ -1,4 +1,4 @@
-# pir-poller
+# light-sensor-poller
 Lambda function for Greengrass used to poll a light sensor for how bright it is
 For each new (non-same) value it will send an event on topic **light_sensor/value**
 
