@@ -1,4 +1,4 @@
-# power-controller
+# servo-controller
 Contains an input lambda controlling a servo relay
 
 This lambda function will control the relay based on input on the topic **servo/+/set**
