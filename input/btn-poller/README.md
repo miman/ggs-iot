@@ -4,7 +4,7 @@ Lambda function for Greengrass used to poll a Button for state changes
 ## Events
 
 ### Sensor events
-If the sensor is active/inactive, it will post msg to topic **btn/on** or **btn/off**
+If the sensor is active/inactive, it will post msg to topic **btn/{sensor-name}/on** or **btn/{sensor-name}/off**
 
 ***The message format***
 ```
@@ -18,7 +18,7 @@ If the sensor is active/inactive, it will post msg to topic **btn/on** or **btn/
 ```
 
 ### Lambda lifecycle events
-When this poller is started/stopped it will post a msg to topic **btn/started** or **btn/stopped**
+When this poller is started/stopped it will post a msg to topic **btn/{sensor-name}/started** or **btn/{sensor-name}/stopped**
 
 ***The message format***
 ```

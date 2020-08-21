@@ -1,6 +1,8 @@
 # distance-service
 Lambda function for Greengrass which enables a client to request for distance sensor data or set a trigger for the data.
+
 This is done in a separate Lambda from the distance-poller Lambda while the actual poller Lambda is a long running Lambda it cannot listen to incoming MQTT msgs.
+
 So this Lambda can listen to requests from the clients and also events from the actual poller, it caches and then resends the events when requested by the client.
 
 ## Limitations
