@@ -1,10 +1,7 @@
 # power-controller
 Contains an input lambda controlling a power relay & a test LED
 
-This lambda function will control the relay based on input on the topic **rfid/+/read** & **btn/+/state**
-
-If we get a msg on topic **rfid/+/read** we will activate the power
-If we get a msg on topic **btn/+/on** we will de-activate the power
+This lambda function will control the relay (on/off) based on input on the topic **pwrRelay/+/set**
 
 We assume the Power relay is on PIN GPIO12
 We assume the LED is on PIN GPIO13
