@@ -20,6 +20,10 @@ For each new (non-same) value it will send an event on topic **water_sensor/valu
 }
 ```
 
+In my test the values ranged between 28000 - 65472
+
+The level when the board indicates that water was detected is set using the potentiometer on the water sensor board.
+
 ### Lambda lifecycle events
 When this poller is started/stopped it will post a msg to topic **water_sensor/started** or **water_sensor/stopped**
 
